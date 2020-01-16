@@ -1,29 +1,30 @@
 class Chat < ApplicationRecord
-    
-  belongs_to :application, foreign_key: application.token, null: false
+  include CounterUpdater
+  
+  belongs_to :application, foreign_key: :application_token, primary_key: :token
   has_many :messages
   
-  before_create :generate_chat_number
+  before_validation :assign_application_id
+  
+  validates_associated :application
 
-  def generate_number
-    self.number = generate_chat_number(application_id, application.chats_counter)
+  after_validation :generate_chat_number
+
+  def assign_application_id
+    application = Application.find_by(token: self.application_token)
+    self.application_id = application.id
   end
 
-  def self.generate_chat_number(application_id, current_count = 0)
-    chats_counter_key = "application:#{application_id}:chats_counter"
-    counter_lock = "application:#{application_id}:counter_lock"
-    
-    # if !REDIS.exists(chats_counter_key)
-    #   REDIS.set(chats_counter_key, current_count)
-    # end
-    # new_counter_value = REDIS.incr(chats_counter_key)
-
-    return new_counter_value if REDIS.exists(counter_lock)
-    
-    application.sync_chats_counter(new_counter_value)
-    REDIS.set(counter_lock, 1, ex: 1.minute)
-    
-    new_counter_value
+  def generate_chat_number
+    counter_key = "application:#{self.application_id}:chats_counter"
+    counter_lock = "application:#{self.application_id}:chats_counter_lock"
+    # If key did not previously exist, initialize and set to 1
+    new_counter_value = REDIS.incr(counter_key)
+    self.number = new_counter_value
+    unless REDIS.exists(counter_lock)
+      CounterUpdater.update_chats_counter(application_id, new_counter_value)
+      REDIS.set(counter_lock, 1, ex: 1.minute)
+    end
   end
 
 end

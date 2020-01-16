@@ -5,9 +5,9 @@ class CreateChats < ActiveRecord::Migration[5.1]
       t.integer :number, null: false
       t.integer :messages_counter, default: 0
       
-      t.timestamps
-
       t.references :application, null: false
+
+      t.timestamps
 
       t.index [:number]
     end

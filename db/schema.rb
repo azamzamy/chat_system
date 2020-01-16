@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200111223956) do
+ActiveRecord::Schema.define(version: 20200115172822) do
 
   create_table "applications", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci" do |t|
     t.string "name", limit: 100, null: false
@@ -25,22 +25,29 @@ ActiveRecord::Schema.define(version: 20200111223956) do
   create_table "chats", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci" do |t|
     t.integer "number", null: false
     t.integer "messages_counter", default: 0
+    t.bigint "application_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "application_id", null: false
+    t.string "application_token"
     t.index ["application_id"], name: "index_chats_on_application_id"
+    t.index ["application_token"], name: "index_chats_on_application_token"
+    t.index ["number", "application_token"], name: "index_chats_on_number_and_application_token", unique: true
     t.index ["number"], name: "index_chats_on_number"
   end
 
   create_table "messages", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci" do |t|
-    t.integer "number", null: false
+    t.integer "number"
     t.text "content", null: false
     t.string "email", limit: 100
+    t.integer "chat_number", null: false
+    t.string "application_token"
+    t.bigint "application_id", null: false
+    t.bigint "chat_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "chat_id", null: false
+    t.index ["application_id"], name: "index_messages_on_application_id"
+    t.index ["application_token", "chat_number"], name: "index_messages_on_application_token_and_chat_number"
     t.index ["chat_id"], name: "index_messages_on_chat_id"
-    t.index ["number", "chat_id"], name: "index_messages_on_number_and_chat_id"
   end
 
 end

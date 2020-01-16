@@ -1,4 +1,6 @@
 class Message < ApplicationRecord
+  include Elasticsearch::Model
+  include Elasticsearch::Model::Callbacks
   include CounterUpdater
 
   belongs_to :application, foreign_key: :application_token, primary_key: :token
@@ -9,10 +11,22 @@ class Message < ApplicationRecord
   after_validation :assign_application_id
   after_validation :assign_chat_id
   after_validation :generate_message_number
-  after_validation :check_shit
+  after_validation :check_value
 
-  def check_shit
-    puts "INSPECTOR:::::  #{self.inspect}"
+  after_commit on: :update do
+    self.index_content_in_elasticsearch
+  end
+
+  settings do
+    mappings dynamic: false do
+      indexes :content, type: :text
+      indexes :chat_number, type: :integer
+      indexes :application_token, type: :string
+    end
+  end
+
+  def check_value
+    puts "INSPECTOR:  #{self.inspect}"
   end
 
   def assign_application_id
@@ -32,7 +46,7 @@ class Message < ApplicationRecord
   def generate_message_number
     counter_key = "chat:#{self.chat_id}:messages_counter"
     counter_lock = "chat:#{self.chat_id}:messages_counter_lock"
-    # If key did not previously exist, initialize and set to 1 
+    # If key did not previously exist, initialize and set to 1
     new_counter_value = REDIS.incr(counter_key)
     self.number = new_counter_value
     unless REDIS.exists(counter_lock)
@@ -40,4 +54,31 @@ class Message < ApplicationRecord
       REDIS.set(counter_lock, 1, ex: 1.minute)
     end
   end
+
+  def self.search_chat(query, application_token, chat_number)
+    self.__elasticsearch__.search({
+      query: {
+        bool: {
+          must: {
+            multi_match: {
+              query: query,
+              analyzer: 'standard',
+              fields: [:content]
+            }
+          },
+          filter: [
+            # { term: { application_token: application_token } },
+            # { term: { chat_number: chat_number.to_i } }
+          ]
+        }
+      }
+    })
+  end
+
+  private
+
+  def index_content_in_elasticsearch
+    self.__elasticsearch__.index_document
+  end
+
 end

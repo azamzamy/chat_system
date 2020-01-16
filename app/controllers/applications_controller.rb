@@ -3,12 +3,15 @@ class ApplicationsController < ApplicationController
   
   def index
     @applications = Application.order(:id)
+
     render json: JSONAPI::Serializer.serialize(@applications, is_collection: true)
   end
 
   def show
     application_token = params.require(:token)
+
     @application = Application.where(token: application_token).first
+
     render json: {
       name: @application.name,
       application_token: @application.token,
@@ -19,6 +22,7 @@ class ApplicationsController < ApplicationController
 
   def create
     name = params.require(:name)
+    
     @application = Application.new(name: name)
     @application.save!
     
@@ -33,9 +37,22 @@ class ApplicationsController < ApplicationController
     }
   end
 
-  # def application_params
-  #   application = params.require(:application).permit(:name)
-  # end
+  def update_name
+    token = params.require(:token)
+    name = params.require(:name)
 
+    @application = Application.find_by(token: token)
+    
+    if @application.update_attributes(name: name)
+      render json: {
+        status: 'success' 
+      }
+    else
+      render json: {
+        status: 'An error occured.',
+        error: @application.errors.messages
+      }
+    end
+  end
 
 end

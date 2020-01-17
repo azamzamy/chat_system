@@ -24,9 +24,9 @@ class MessagesController < ApplicationController
   def show
     application_token = params.require(:token)
     chat_number = params.require(:chat_number)
+    message_number = params.require(:chat_number)
 
-    @message = Message.find_by(application_token: application_token)
-    
+    @message = Message.find_by(application_token: application_token, chat_number: chat_number, number: message_number)
     render json: {
       message_number: @message.number,
       from: @message.email,
@@ -43,16 +43,10 @@ class MessagesController < ApplicationController
     content = params.require(:content)
     email = params.permit(:email)
     
-    @message = Message.new(application_token: application_token, chat_number: chat_number, content: content, email: email)
-    @message.save!
+    CreateMessageWorker.perform_async(application_token, chat_number, content, email)
 
     render json: {
-      message_number: @message.number,
-      from: @message.email,
-      content: @message.content,
-      application_token: @message.application_token,
-      chat_number: @message.chat_number,
-      created_at: @message.created_at
+      message: "your message is being processed."
     }
   end
 end

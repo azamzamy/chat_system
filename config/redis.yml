@@ -1,6 +1,6 @@
 #config/redis.yml
 default:
-  host: localhost
+  host: redis://localhost
   port: 6379
 development:
   db: 0
@@ -10,5 +10,5 @@ test:
 #  namespace: chat_system_test
 production:
   db: 2
-  host: 192.168.1.100
+  port: 127.0.0.1
 #  namespace: chat_system_prod

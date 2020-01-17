@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 20200115172822) do
   end
 
   create_table "messages", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci" do |t|
-    t.integer "number"
+    t.integer "number", null: false
     t.text "content", null: false
     t.string "email", limit: 100
     t.integer "chat_number", null: false

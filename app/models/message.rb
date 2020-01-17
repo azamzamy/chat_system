@@ -4,7 +4,7 @@ class Message < ApplicationRecord
   include CounterUpdater
 
   belongs_to :application, foreign_key: :application_token, primary_key: :token
-  belongs_to :chat, optional: true
+  belongs_to :chat
   
   validates_associated :application
   
@@ -14,14 +14,13 @@ class Message < ApplicationRecord
   after_validation :check_value
 
   after_commit on: :update do
-    self.index_content_in_elasticsearch
+    self.index_elasticsearch
   end
 
   settings do
     mappings dynamic: false do
       indexes :content, type: :text
-      indexes :chat_number, type: :integer
-      indexes :application_token, type: :string
+      indexes :chat_id, type: :integer
     end
   end
 
@@ -40,7 +39,7 @@ class Message < ApplicationRecord
 
   def assign_chat_id
     self.chat = Chat.find_by(application_token: self.application_token, number: self.chat_number)
-    self.chat_id = chat.id
+    self.chat_id = self.chat.id
   end
 
   def generate_message_number
@@ -55,7 +54,7 @@ class Message < ApplicationRecord
     end
   end
 
-  def self.search_chat(query, application_token, chat_number)
+  def self.search_chat(query, chat_id)
     self.__elasticsearch__.search({
       query: {
         bool: {
@@ -67,8 +66,7 @@ class Message < ApplicationRecord
             }
           },
           filter: [
-            # { term: { application_token: application_token } },
-            # { term: { chat_number: chat_number.to_i } }
+            { term: { chat_id: chat_id.to_i } }
           ]
         }
       }
@@ -77,7 +75,7 @@ class Message < ApplicationRecord
 
   private
 
-  def index_content_in_elasticsearch
+  def index_elasticsearch
     self.__elasticsearch__.index_document
   end
 

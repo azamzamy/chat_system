@@ -5,6 +5,7 @@ class ChatsController < ApplicationController
     application_token = params.require(:token)
     
     @chats = Chat.where(application_token: application_token)
+    return render json: {message: "No chats found. Create one."} unless @chats
     @chats_array = Array.new
     @chats.each do |chat|
       @chats_array << {
@@ -56,20 +57,22 @@ class ChatsController < ApplicationController
 
   # Search through messages of a given chat using ElasticSearch
   def search
-    token = params.require(:token)
-    number = params.require(:chat_number)
+    application_token = params.require(:token)
+    chat_number = params.require(:chat_number)
     query = params.require(:query)
     
-    messages = Message.where(application_token: token, chat_number: number)
-    messages, total_hits = execute_query(query, token, number)
-    return render json: {message: "No chat was found"} unless total_hits.value > 0
+    message = Message.find_by(application_token: application_token, chat_number: chat_number)
+    return render json: { message: "No results matching your query." } unless message
+    chat_id = message.chat_id
+    messages, total_hits = execute_query(query, chat_id)
+    return render json: { message: "No messages were found." } unless total_hits.value > 0
     render json: { messages_count: total_hits.value,
                    messages: messages },
            status: 200
   end
 
-  def execute_query(es_query, token, number)
-    query_result = Message.search_chat(es_query, token, number)
+  def execute_query(es_query, chat_id)
+    query_result = Message.search_chat(es_query, chat_id)
     total_hits = query_result.response['hits']['total']
     messages_array = Array.new
     messages = query_result.results.map do |msg|

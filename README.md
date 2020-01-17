@@ -1,24 +1,44 @@
-# README
+# Chat App
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Run app using `docker-compose up`
 
-Things you may want to cover:
+### HTTP Requests to use to test the app;
 
-* Ruby version
+Show all applications
+GET http://localhost:3000/applications/
 
-* System dependencies
+create new applications
+POST http://localhost:3000/applications/messenger
+POST http://localhost:3000/applications/chat_app
+POST http://localhost:3000/applications/ping
 
-* Configuration
+show an applications data
+GET http://localhost:3000/applications/eRGoVWFYiifYrw9hxt49v5yq/
 
-* Database creation
+Show all chats for an application
+GET http://localhost:3000/applications/eRGoVWFYiifYrw9hxt49v5yq/chats
 
-* Database initialization
+Create a new chat
+POST http://localhost:3000/applications/eRGoVWFYiifYrw9hxt49v5yq/chats
 
-* How to run the test suite
+Show a chat's data
+GET http://localhost:3000/applications/eRGoVWFYiifYrw9hxt49v5yq/chats
 
-* Services (job queues, cache servers, search engines, etc.)
+Show a chat's messages
 
-* Deployment instructions
 
-* ...
+Create a new message in a given chat
+http://localhost:3000/applications/eRGoVWFYiifYrw9hxt49v5yq/chats/1/messages?content=Hi there,&email=adam@gmail.com
+
+Create a new message in a given chat
+http://localhost:3000/applications/eRGoVWFYiifYrw9hxt49v5yq/chats/1/messages?content=hello world&email=adam@gmail.com
+
+http://localhost:3000/applications/eRGoVWFYiifYrw9hxt49v5yq/chats/1/messages?content=Hi there,&email=adam@gmail.com
+
+http://localhost:3000/applications/eRGoVWFYiifYrw9hxt49v5yq/chats/1/messages?content=it'sme&email=adam@gmail.com
+
+Show a message's details
+http://localhost:3000/applications/eRGoVWFYiifYrw9hxt49v5yq/chats/1/messages/1
+
+Search for a keyword inside a given chat
+http://localhost:3000/applications/eRGoVWFYiifYrw9hxt49v5yq/chats/1/search?query=rab

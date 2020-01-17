@@ -4,7 +4,7 @@
 
 `docker-compose up`
 
-### HTTP Requests to use to test the app
+### HTTP Requests for testing the app
 
 ##### Show all applications
 GET http://localhost:3000/applications/

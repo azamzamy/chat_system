@@ -1,6 +1,7 @@
 # Chat App
 
-#####Run app using 
+##### Run app using 
+
 `docker-compose up`
 
 ### HTTP Requests to use to test the app

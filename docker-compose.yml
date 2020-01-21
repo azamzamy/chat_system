@@ -10,11 +10,9 @@ services:
     build: .
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
-      - '.:/chat_system/app'
+      - '.:/chat_system'
     ports:
       - "3000:3000"
-    environment: 
-      RAILS_ENV: development
     depends_on:
       - 'redis'
       - 'db'
@@ -33,11 +31,12 @@ services:
       - '.env'
 
   db:
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
+    image: 'mysql:5.7'
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
     networks:
       - app-tier
 

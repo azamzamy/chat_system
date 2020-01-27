@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema.define(version: 20200115172822) do
 
-  create_table "applications", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci" do |t|
+  create_table "applications", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "name", limit: 100, null: false
     t.string "token"
     t.integer "chats_counter", default: 0
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 20200115172822) do
     t.index ["token"], name: "index_applications_on_token"
   end
 
-  create_table "chats", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci" do |t|
+  create_table "chats", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "number", null: false
     t.integer "messages_counter", default: 0
     t.bigint "application_id", null: false
@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 20200115172822) do
     t.index ["number"], name: "index_chats_on_number"
   end
 
-  create_table "messages", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci" do |t|
+  create_table "messages", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "number", null: false
     t.text "content", null: false
     t.string "email", limit: 100

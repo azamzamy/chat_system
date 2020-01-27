@@ -1,6 +1,5 @@
 #config/redis.yml
 default:
-  host: redis://localhost
   port: 6379
 development:
   db: 0

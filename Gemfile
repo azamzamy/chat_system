@@ -31,6 +31,7 @@ gem 'jsonapi-serializers'
 gem 'elasticsearch-model', git: 'git://github.com/elastic/elasticsearch-rails.git', branch: 'master'
 gem 'elasticsearch-rails', git: 'git://github.com/elastic/elasticsearch-rails.git', branch: 'master'
 gem 'sidekiq', '~> 5.2.7'
+gem 'rack', github: 'rack/rack', ref: 'f690bb71425aa31d7b9b3113829af773950d8ab5'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

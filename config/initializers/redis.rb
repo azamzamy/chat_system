@@ -10,12 +10,3 @@ HOST = 'redis'
 PORT = 6379
 
 REDIS = Redis.new(host: HOST, port: PORT)
-puts "ADASDADADASDASDASDASD:::::#{REDIS.inspect}"
-# puts REDIS
-
-# #$redis_ns = Redis::Namespace.new(cnfg[:namespace], :redis => $redis) if cnfg[:namespace]
-
-# # To clear out the db before each test
-# # Redis.flushall if Rails.env = "test"
-
-# REDIS = Redis.new

@@ -111,7 +111,8 @@ GEM
     nio4r (2.5.2)
     nokogiri (1.10.7)
       mini_portile2 (~> 2.4.0)
-    puma (3.12.2)
+    puma (4.3.3)
+      nio4r (~> 2.0)
     rack-protection (2.0.8.1)
       rack
     rack-test (1.1.0)
@@ -203,7 +204,7 @@ DEPENDENCIES
   jsonapi-serializers
   listen (>= 3.0.5, < 3.2)
   mysql2 (>= 0.3.18, < 0.6.0)
-  puma (~> 3.7)
+  puma (~> 4.3)
   rack!
   rails (~> 5.1.7)
   redis (~> 4.0)
